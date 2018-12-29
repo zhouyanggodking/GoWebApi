@@ -1,19 +1,20 @@
 package main
 
-import "fmt"
-import "go-tutorials/shape"
+import (
+	"fmt"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"   // mysql dialect
+)
 
 func main() {
-	const a = 5
-	fmt.Println(a)
-	fmt.Printf("hello, world\n")
-	print(8, 9)
+	db, err := gorm.Open("mysql", "root@tcp(10.10.24.108:3306)/godking?charset=utf8&parseTime&loc=Local")
+	defer db.Close()
 
-	shape.Draw()
-}
-
-func print(num, t int) {
-	fmt.Println(num,  t)
+	if err != nil {
+		fmt.Print(err)
+	} else {
+		fmt.Print("db connected")
+	}
 }
 
 func init() {
