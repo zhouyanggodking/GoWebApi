@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"   // mysql dialect
+	"go-tutorials/models"
 )
 
 func main() {
@@ -16,24 +17,25 @@ func main() {
 		fmt.Print("db connected")
 	}
 
-	db.DropTableIfExists(&Product{})
-	db.DropTableIfExists(&User{})
+	db.DropTableIfExists(&models.Product{})
+	db.DropTableIfExists(&models.User{})
 
 	// db.AutoMigrate(&User{})
-	db.AutoMigrate(&Product{}, &User{})
+	db.AutoMigrate(&models.Product{}, &models.User{})
 
-	user := User {
+	user := models.User {
 		Name: "godking", 
 		Age: 10,
 	}
-	user2 := User {Name: "oceansky", Age: 20}
+	user2 := models.User {Name: "oceansky", Age: 20}
 	db.Create(&user)
 	db.Create(&user2)
 
 	// should add foreign key manually
-	db.Model(&Product{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+	// this is neccesary to add foreign key in database
+	db.Model(&models.Product{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 	
-	products := []Product{
+	products := []models.Product{
 		{
 			UserID: user.ID,
 			Number: "123456789",
@@ -50,17 +52,4 @@ func main() {
 
 func init() {
 	fmt.Println("init func in main package")
-}
-
-type User struct {
-	gorm.Model  // ID, CreatedAt, UpdatedAt, DeletedAt
-	Name string
-	Age uint
-	Products []Product `gorm:"foreignkey:UserID"`
-}
-
-type Product struct {
-	gorm.Model
-	Number string
-	UserID uint
 }
